@@ -123,6 +123,56 @@ export default function HomePage() {
     return shuffled
   }
 
+      // ⭐ 重み付きだけど「同じ人は1回だけ」になる並び替え
+  const createWeightedOrder = (profiles: Profile[]): Profile[] => {
+    // id ごとの重み（ここを好きに調整）
+    const weights: { [key: string]: number } = {
+      "65": 3, // 3倍出やすい
+      "93": 2,
+      "34": 2,
+      "1": 2,
+      "26": 2,
+      "81": 2,
+      "91": 2,
+      "109": 2,
+    }
+
+    // 残り候補と対応する重み
+    const remaining = [...profiles]
+    const remainingWeights = remaining.map((p) => weights[p.id] ?? 1)
+    const result: Profile[] = []
+
+    while (remaining.length > 0) {
+      const totalWeight = remainingWeights.reduce((sum, w) => sum + w, 0)
+      const r = Math.random() * totalWeight
+
+      let acc = 0
+      let selectedIndex = 0
+
+      for (let i = 0; i < remaining.length; i++) {
+        acc += remainingWeights[i]
+        if (r <= acc) {
+          selectedIndex = i
+          break
+        }
+      }
+
+      // この1人を次の順番として確定
+      result.push(remaining[selectedIndex])
+
+      // 候補から削除（＝同じ人は二度と選ばれない）
+      remaining.splice(selectedIndex, 1)
+      remainingWeights.splice(selectedIndex, 1)
+    }
+
+    console.log(
+      `[v0] Created weighted order: ${profiles.length} unique profiles -> reordered with weights`
+    )
+
+    return result
+  }
+
+    
   useEffect(() => {
     const loadCsv = async () => {
       try {
