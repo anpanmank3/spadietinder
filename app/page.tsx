@@ -123,7 +123,7 @@ export default function HomePage() {
     return shuffled
   }
 
-      // ⭐ 重み付きだけど「同じ人は1回だけ」になる並び替え
+  // ⭐ 重み付きだけど「同じ人は1回だけ」になる並び替え
   const createWeightedOrder = (profiles: Profile[]): Profile[] => {
     // id ごとの重み（ここを好きに調整）
     const weights: { [key: string]: number } = {
@@ -172,7 +172,6 @@ export default function HomePage() {
     return result
   }
 
-    
   useEffect(() => {
     const loadCsv = async () => {
       try {
@@ -345,31 +344,38 @@ export default function HomePage() {
     }
   }
 
+  // ⭐ ここを書き換えた：0人ならリセット、1人以上ならフォームへ
   const handleContinueToForm = () => {
     setShowCompletionModal(false)
-    setShowForm(true)
+
+    if (selectedProfiles.length === 0) {
+      // だれも選んでない → リセットして再スタート
+      handleReset()
+    } else {
+      // 1人以上選んでいる → フォームへ
+      setShowForm(true)
+    }
   }
 
   const handleReset = () => {
-  console.log("[v0] Resetting and reshuffling profiles")
+    console.log("[v0] Resetting and reshuffling profiles")
 
-  // ⭐ 重み付きの新しい並び順にする（重複なし）
-  const weightedOrderedProfiles = createWeightedOrder(originalProfiles)
-  setProfiles(weightedOrderedProfiles)
+    // ⭐ 重み付きの新しい並び順にする（重複なし）
+    const weightedOrderedProfiles = createWeightedOrder(originalProfiles)
+    setProfiles(weightedOrderedProfiles)
 
-  setCurrentIndex(0)
-  setSelectedProfiles([])
-  setReviewedCount(0)
-  setSuperLikeUsed(false)
-  setShowForm(false)
-  setShowCompletionModal(false)
-  setLikeType(null)
-  setActionType(null)
-  setDragOffset({ x: 0, y: 0 })
-  setIsDragging(false)
-  setUserActions([])
-}
-
+    setCurrentIndex(0)
+    setSelectedProfiles([])
+    setReviewedCount(0)
+    setSuperLikeUsed(false)
+    setShowForm(false)
+    setShowCompletionModal(false)
+    setLikeType(null)
+    setActionType(null)
+    setDragOffset({ x: 0, y: 0 })
+    setIsDragging(false)
+    setUserActions([])
+  }
 
   if (showForm) {
     return <SubmissionForm selectedProfiles={selectedProfiles} userActions={userActions} onReset={handleReset} />
