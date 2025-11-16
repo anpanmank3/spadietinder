@@ -263,13 +263,16 @@ export default function HomePage() {
             console.log(`[v0] Skipping invalid row ${i} - number: "${number}", name: "${name}"`)
           }
         }
-
         console.log("[v0] Total valid profiles loaded:", list.length)
-        
+
+        // 重みなしの元リストは保持しておく
         setOriginalProfiles(list)
-        const shuffledProfiles = shuffleArray(list)
-        console.log("[v0] Profiles shuffled for random display")
-        setProfiles(shuffledProfiles)
+
+        // ⭐ 重み付きの並び順を作る（同じ人は1回だけ）
+        const weightedOrderedProfiles = createWeightedOrder(list)
+        console.log("[v0] Profiles ordered with weights for random display")
+        setProfiles(weightedOrderedProfiles)
+
       } catch (e) {
         console.error("[v0] CSV読み込みエラー:", e)
       }
@@ -348,22 +351,25 @@ export default function HomePage() {
   }
 
   const handleReset = () => {
-    console.log("[v0] Resetting and reshuffling profiles")
-    const reshuffled = shuffleArray(originalProfiles)
-    setProfiles(reshuffled)
-    
-    setCurrentIndex(0)
-    setSelectedProfiles([])
-    setReviewedCount(0)
-    setSuperLikeUsed(false)
-    setShowForm(false)
-    setShowCompletionModal(false)
-    setLikeType(null)
-    setActionType(null)
-    setDragOffset({ x: 0, y: 0 })
-    setIsDragging(false)
-    setUserActions([])
-  }
+  console.log("[v0] Resetting and reshuffling profiles")
+
+  // ⭐ 重み付きの新しい並び順にする（重複なし）
+  const weightedOrderedProfiles = createWeightedOrder(originalProfiles)
+  setProfiles(weightedOrderedProfiles)
+
+  setCurrentIndex(0)
+  setSelectedProfiles([])
+  setReviewedCount(0)
+  setSuperLikeUsed(false)
+  setShowForm(false)
+  setShowCompletionModal(false)
+  setLikeType(null)
+  setActionType(null)
+  setDragOffset({ x: 0, y: 0 })
+  setIsDragging(false)
+  setUserActions([])
+}
+
 
   if (showForm) {
     return <SubmissionForm selectedProfiles={selectedProfiles} userActions={userActions} onReset={handleReset} />
