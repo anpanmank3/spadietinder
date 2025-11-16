@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const scriptUrl = process.env.APPS_SCRIPT_WEBHOOK_URL;
+    const scriptUrl = process.env.APPS_SCRIPT_WEBHOOK_URL=https://script.google.com/macros/s/AKfycbzwBpxF9knS7__BCmpjkpMXfr2b0_sSzFi8dDSMb_lL3ooDxNG4PqGCRGVspnUSsoClJQ/exec
+
     if (!scriptUrl) {
       console.error('APPS_SCRIPT_WEBHOOK_URL is not set');
       return NextResponse.json(
